@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,6 +38,7 @@ fun LoginScreen(
             .fillMaxSize()
             .padding(horizontal = 30.dp)
     ) {
+        /*
         val isError = viewModel.loginError != ""
         LoginField(
             value = viewModel.userName,
@@ -63,6 +63,7 @@ fun LoginScreen(
         if (isError) {
             Text(viewModel.loginError)
         }
+        */
     }
 }
 

@@ -4,18 +4,18 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.croqol.ui.CroQoLNavHost
@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun CroQoLApp(
@@ -44,10 +46,11 @@ fun CroQoLApp(
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
-        val currentScreen = croQoLTabRowScreens.find { it.route == currentDestination?.route } ?: Overview
         val mainViewModel: MainViewModel = hiltViewModel()
-        val user by mainViewModel.userFlow.collectAsStateWithLifecycle(initialValue = User.getDefaultInstance())
-        val screens = if (user.isLoggedIn) croQolTabRowScreensLoggedIn else croQoLTabRowScreens
+        val screens = if (mainViewModel.userIsAuthenticated) croQolTabRowScreensLoggedIn else croQoLTabRowScreens
+        val currentScreen = screens.find { it.route == currentDestination?.route } ?: Overview
+        val context = LocalContext.current
+        mainViewModel.setAccount(context)
         NavigationSuiteScaffold(
             navigationSuiteItems = {
                 screens.forEach {
@@ -55,14 +58,14 @@ fun CroQoLApp(
                         icon = {
                             Icon(imageVector = it.icon, contentDescription = it.route)
                         },
-                        label = { Text(it.route) },
+                        label = { Text(it.route.replaceFirstChar{ firstLetter -> firstLetter.uppercaseChar() }) },
                         selected = it == currentScreen,
                         onClick = {
                             navController.navigateSingleTopTo(it.route)
                         }
                     )
                 }
-                if (user.isLoggedIn) {
+                if (mainViewModel.userIsAuthenticated) {
                     item(
                         icon = {
                             Icon(imageVector = Icons.AutoMirrored.Outlined.Logout, contentDescription = "")
@@ -70,16 +73,25 @@ fun CroQoLApp(
                         label = { Text("Logout") },
                         selected = false,
                         onClick = {
-                            mainViewModel.logOutUser()
-                            navController.navigateSingleTopTo(Overview.route)
+                            mainViewModel.logout(context)
+                        }
+                    )
+                } else {
+                    item(
+                        icon = {
+                            Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = "")
+                        },
+                        label = { Text("Login") },
+                        selected = false,
+                        onClick = {
+                            mainViewModel.login(context)
                         }
                     )
                 }
             }
         ) {
             CroQoLNavHost(
-                navController = navController,
-                mainViewModel = mainViewModel
+                navController = navController
             )
         }
     }

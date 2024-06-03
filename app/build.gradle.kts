@@ -19,7 +19,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-        manifestPlaceholders["MAPS_API_KEY"] = "AIzaSyDsUm3PBZz2p0qhO3BSHP3J9C-JBr5XdlE"
+        manifestPlaceholders["MAPS_API_KEY"] = "AIzaSyA9g0NCTPCCz9o6ggb_xod1QCCQViAJvS4"
+        manifestPlaceholders["auth0Domain"] = "@string/com_auth0_domain"
+        manifestPlaceholders["auth0Scheme"] = "@string/com_auth0_scheme"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,7 +72,15 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.play.services.location)
+    implementation(libs.kotlinx.coroutines.android)
 
+    //Vico graphing
+    implementation(libs.vico.compose.m3)
+    //Auth2
+    implementation(libs.auth0)
+    implementation(libs.jwtdecode)
     //Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")

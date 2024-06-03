@@ -20,7 +20,7 @@ import javax.inject.Singleton
 interface DataModuleBinds {
 
     @Binds
-    fun provideCatFactRepository(repository: NetworkCatFactRepository): CatFactRepository
+    fun provideIndexRepository(repository: NetworkIndexRepository): IndexRepository
 
 }
 

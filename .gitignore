@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+secret.properties
+/app/build.gradle.kts
+/app/src/main/res/values/auth0.xml
